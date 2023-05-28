@@ -8,7 +8,7 @@ function BasketSummary() {
 
     const subtotal = basket?.items.reduce((total: number, item: BasketItem) => total += (item.price * item.quantity), 0) ?? 0;
 
-    const deliveryFee = subtotal > 10000 ? 0 : 500;    
+    const deliveryFee = subtotal > 10000 ? 0 : 500;
 
     const total = subtotal + deliveryFee
 
@@ -16,34 +16,29 @@ function BasketSummary() {
 
     return (
         <>
-            <Grid container>
-                <Grid item xs={6}></Grid>
-                <Grid item xs={6}>
-                    <TableContainer component={Paper} variant={'outlined'}>
-                        <Table>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell colSpan={2}>Subtotal</TableCell>
-                                    <TableCell align="right">{currencyFormat(subtotal)}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell colSpan={2}>Delivery fee*</TableCell>
-                                    <TableCell align="right">{currencyFormat(deliveryFee)}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell colSpan={2}>Total</TableCell>
-                                    <TableCell align="right">{currencyFormat(total)}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <span style={{ fontStyle: 'italic' }}>*Orders over $100 qualify for free delivery</span>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-            </Grid>
+            <TableContainer component={Paper} variant={'outlined'}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={2}>Subtotal</TableCell>
+                            <TableCell align="right">{currencyFormat(subtotal)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>Delivery fee*</TableCell>
+                            <TableCell align="right">{currencyFormat(deliveryFee)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>Total</TableCell>
+                            <TableCell align="right">{currencyFormat(total)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>
+                                <span style={{ fontStyle: 'italic' }}>*Orders over $100 qualify for free delivery</span>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </>
     );
 }

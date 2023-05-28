@@ -1,4 +1,4 @@
-import { Container, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Button, Container, Divider, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Add, Delete, Remove } from "@mui/icons-material";
 import { useStoreContext } from "../../app/context/StoreContext";
 import agent from "../../app/api/agent";
@@ -6,6 +6,7 @@ import { useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import { currencyFormat } from "../../app/util/util";
 import BasketSummary from "./BasketSummary";
+import { Link } from "react-router-dom";
 
 function BasketPage() {
     const { basket, removeItem, setBasket } = useStoreContext();
@@ -62,12 +63,12 @@ function BasketPage() {
                                         onClick={() => handleRemove(item.productId, 1, 'rem' + item.productId)}>
                                         <Remove />
                                     </LoadingButton>
-    
+
                                     {item.quantity}
-    
+
                                     <LoadingButton
                                         loading={status.name === 'add' + item.productId && status.loading}
-                                        onClick={() => handleAdd(item.productId, 1 , 'add' + item.productId)}>
+                                        onClick={() => handleAdd(item.productId, 1, 'add' + item.productId)}>
                                         <Add />
                                     </LoadingButton>
                                 </TableCell>
@@ -85,10 +86,28 @@ function BasketPage() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            
-            <Divider sx={{mb: 1}}/>
 
-            <BasketSummary/>
+            <Divider sx={{ mb: 1 }} />
+
+            <Grid container>
+                <Grid item xs={6}></Grid>
+                <Grid item xs={6}>
+                    <BasketSummary />
+
+                    <Button
+                        component={Link}
+                        to='/checkout'
+                        fullWidth
+                        variant="contained"
+                        size='large'
+                    >
+                        Check out
+                    </Button>
+                </Grid>
+            </Grid>
+
+
+
         </Container>
     );
 }
