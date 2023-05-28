@@ -1,7 +1,8 @@
 import { AppBar, Badge, Box, CssBaseline, IconButton, List, ListItem, Toolbar, Typography } from "@mui/material";
 import DarkModeButton from "../components/DarkModeButton/DarkModeButton";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
+import { useStoreContext } from "../context/StoreContext";
 
 interface Props {
     darkMode: boolean;
@@ -31,14 +32,18 @@ const navStyle = {
 };
 
 function Header({ darkMode, handleDarkMode }: Props) {
+    const {basket} = useStoreContext();
+    const itemCount = basket?.items.reduce((total, item)=> total += item.quantity, 0);
+
+
     return (
         <AppBar position="static" sx={{ mb: 4 }}>
-            <Toolbar sx={{display: 'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography
                         component={NavLink}
                         to='/' variant="h5"
-                        sx={{textDecoration: 'none', color:'inherit'}}
+                        sx={{ textDecoration: 'none', color: 'inherit' }}
 
                     >
                         Re-Store
@@ -62,13 +67,13 @@ function Header({ darkMode, handleDarkMode }: Props) {
                 </List>
 
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton size="large" color="inherit" sx={{ mr: 2 }}>
-                        <Badge badgeContent='3' color='secondary'>
+                    <IconButton component={Link} to='/basket' size="large" color="inherit" sx={{ mr: 2 }}>
+                        <Badge badgeContent={itemCount} color='secondary'>
                             <ShoppingCart />
                         </Badge>
                     </IconButton>
 
-                    <List sx={{display:'flex', alignItems:'center'}}>
+                    <List sx={{ display: 'flex', alignItems: 'center' }}>
                         {rightLinks.map(({ title, path }) => (
                             <ListItem
                                 key={path}
