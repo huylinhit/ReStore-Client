@@ -8,9 +8,12 @@ import { useStoreContext } from '../context/StoreContext';
 import agent from '../api/agent';
 import { getCookie } from '../util/util';
 import LoadingComponent from './LoadingComponent';
+import { useAppDispatch } from '../store/configurationStore';
+import { setBasket } from '../../features/basket/BasketSlice';
 
 function App() {
-  const {setBasket} = useStoreContext();
+  const dispatch = useAppDispatch();
+
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
@@ -19,7 +22,7 @@ function App() {
     if (buyerId)
     {
         agent.Bastket.list()
-          .then(basket => setBasket(basket))
+          .then(basket => dispatch(setBasket(basket)))
           .catch(error => console.log(error))
           .finally(() => setLoading(false))
     }

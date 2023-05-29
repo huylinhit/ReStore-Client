@@ -5,15 +5,20 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './app/router/router';
 import React from 'react';
 import { StoreProvider } from './app/context/StoreContext';
+import { Provider } from 'react-redux';
+import { store } from './app/store/configurationStore';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+//truyen store vao Provider
+
 root.render(
   <React.StrictMode>
-    <StoreProvider>
-      <RouterProvider router={router} />
-      </StoreProvider>
+      <Provider store={store} >
+        <RouterProvider router={router} />
+      </Provider>
   </React.StrictMode>
 );
 

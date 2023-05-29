@@ -1,8 +1,9 @@
-import { AppBar, Badge, Box, CssBaseline, IconButton, List, ListItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Box, IconButton, List, ListItem, Toolbar, Typography } from "@mui/material";
 import DarkModeButton from "../components/DarkModeButton/DarkModeButton";
 import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
 import { useStoreContext } from "../context/StoreContext";
+import { useAppSelector } from "../store/configurationStore";
 
 interface Props {
     darkMode: boolean;
@@ -32,7 +33,8 @@ const navStyle = {
 };
 
 function Header({ darkMode, handleDarkMode }: Props) {
-    const {basket} = useStoreContext();
+    const {basket} = useAppSelector(state => state.basket);
+
     const itemCount = basket?.items.reduce((total, item)=> total += item.quantity, 0);
 
 

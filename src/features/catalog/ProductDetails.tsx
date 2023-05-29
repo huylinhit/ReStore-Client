@@ -1,37 +1,34 @@
 import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Product } from "../../app/models/product";
-import agent from "../../app/api/agent";
 import NotFound from "../../app/errors/NotFound";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { currencyFormat } from "../../app/util/util";
 import { LoadingButton } from "@mui/lab";
-import { useStoreContext } from "../../app/context/StoreContext";
+import { useAppDispatch, useAppSelector } from "../../app/store/configurationStore";
+import { addBasketItemAsync, removeBasketItemAsync } from "../basket/BasketSlice";
+import { fetchProductAsync, productSelectors } from "./CatalogSlice";
 
 
 
 function ProductDetails() {
-    const { basket, removeItem, setBasket } = useStoreContext();
+    const dispatch = useAppDispatch();
+    const {status, basket} = useAppSelector(state => state.basket);
     const { id } = useParams<{ id: string }>();
-    const [product, setProduct] = useState<Product | null>(null);
-    const [loading, setLoading] = useState(true);
+    const product = useAppSelector(state => productSelectors.selectById(state, id!));
+    const {status: productStatus} = useAppSelector(state => state.catalog)
     const [quantity, setQuantity] = useState(0);
-    const [submitting, setSubmitting] = useState(false);
 
-    var item = basket?.items.find(i => i.productId == product?.id);
+    var item = basket?.items.find(i => i.productId === product?.id);
 
     useEffect(() => {
         if (item) {
             setQuantity(item.quantity);
         }
 
-        id && agent.Catalog.details(parseInt(id))
-            .then(response => setProduct(response))
-            .catch(error => console.log(error))
-            .finally(() => setLoading(false))
-    }, [id, item]);
+        if(!product && id) dispatch(fetchProductAsync(parseInt(id!)))
+
+    }, [id, item, dispatch]);
 
 
     const handleChange = (e: any) => {
@@ -42,8 +39,6 @@ function ProductDetails() {
     }
 
     const handleUpdateCart = () =>{
-        setSubmitting(true);
-
         //item = basket?.item.find(i => i.productId === product.id) 
         //Chua co San pham => Add vao Cart. 
         //Co san pham => change Quantity
@@ -51,29 +46,19 @@ function ProductDetails() {
         // item?.quantity là số lượng trong cart
         // quantity là số lượng người dùng chỉnh sửa
 
-
         if (!item || quantity > item.quantity){
             const updateQuantity = item ? quantity - item?.quantity : quantity;
-
-            agent.Bastket.addItem(product?.id!, updateQuantity)
-                .then(basket => setBasket(basket))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitting(false));
+            dispatch(addBasketItemAsync({productId: product?.id!,quantity: updateQuantity}))
         }else
         {
             const updateQuantity = item.quantity - quantity;
-
-            agent.Bastket.removeItem(product?.id!, updateQuantity)
-                .then(() => removeItem(product!.id!, updateQuantity))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitting(false))
-
+            dispatch(removeBasketItemAsync({productId: product?.id!, quantity: updateQuantity}))
         }
 
 
     }
 
-    if (loading) return <LoadingComponent message='Loading Product Details' />
+    if (productStatus.includes('pending')) return <LoadingComponent message='Loading Product Details' />
 
     if (!product) return <NotFound />
 
@@ -81,7 +66,7 @@ function ProductDetails() {
         <Typography variant="h2">
             <Grid container>
                 <Grid item xs={6}>
-                    <img src={product.pictureUrl} style={{ width: '100%' }} />
+                    <img src={product.pictureUrl} style={{ width: "100%" }} />
                 </Grid>
 
                 <Grid item xs={6}>
@@ -145,7 +130,7 @@ function ProductDetails() {
 
                         <Grid item xs={6}>
                             <LoadingButton
-                                loading={submitting}
+                                loading={status.includes('pendingRemoveItem' + item?.productId)}
                                 variant="contained"
                                 size="large"
                                 sx={{ height: '52px' }}
